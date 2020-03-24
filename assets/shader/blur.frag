@@ -28,17 +28,16 @@ void main() {
 
   // create a vec2 with our sine
   // what happens if you put sineWave in the y slot? in Both slots?
-  vec2 distort = vec2( sineWave, 0);
+  vec2 distort = vec2( sineWave, sineWave2);
   vec2 distort2 = vec2( sineWave2, 0);
   // vec2 distort3 = vec2( sineWave3, 0);
 
   // add the distortion to our texture coordinates
   vec4 tex = texture2D(tex0,  uv - distort);
-  vec4 tex2 = texture2D(tex0,  uv - distort2);
+  vec4 tex2 = texture2D(tex0,  uv );
   // vec4 tex3 = texture2D(tex0,  uv - distort3);
 
-  tex.r = tex2.b ;
-  // tex.b = tex3.r  ;
+  // tex.r = tex2.r;
 
   gl_FragColor = tex;
 }
