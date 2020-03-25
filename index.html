@@ -23,10 +23,19 @@
         left: 20px;
         z-index: 20;
       }
+
+      .file {
+        position: absolute;
+        top: 60px;
+        left: 20px;
+        z-index: 20;
+      }
     </style>
   </head>
   <body>
     <button class="js-start button">start</button>
+    <input type="file" id="music" name="music" accept=".mp4, .mov, .mp3" class="file js-file" />
+    <div class="test"></div>
     <script src="assets/js/p5.min.js"></script>
     <script src="assets/js/p5.dom.js"></script>
     <script src="assets/js/p5.sound.js"></script>

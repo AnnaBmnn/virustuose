@@ -12,7 +12,11 @@ let cameraX = 0;
 let cameraY = 0;
 let spectrum;
 let isPeaking = false;
+let songUpload;
+let videoUpload;
 const startButton = document.querySelector(".js-start");
+const fileInput = document.querySelector(".js-file");
+const testDiv = document.querySelector(".test");
 
 startButton.addEventListener("click", function() {
   if (!song.isPlaying()) {
@@ -28,16 +32,24 @@ startButton.addEventListener("click", function() {
   }
 });
 
+fileInput.addEventListener("change", e => {
+  console.log(e);
+  if (e.srcElement.files.length > 0) {
+    songUpload = e.srcElement.files[0];
+    videoUpload = document.createElement("video");
+
+    videoUpload.src = URL.createObjectURL(songUpload);
+    song = loadSound(videoUpload.src);
+  } else {
+    return false;
+  }
+});
+
 function startSong() {
   song.loop();
 
   fft = new p5.FFT();
   peakDetect = new p5.PeakDetect();
-
-  //what to do on peak time ?
-  // peakDetect.onPeak(() => {
-  //   console.log("peak");
-  // }, 0.9);
 }
 
 function preload() {
@@ -68,37 +80,17 @@ function draw() {
   if (song.isPlaying()) {
     fft.analyze();
     peakDetect.update(fft);
+
     background(0);
-
-    //draw small
-    // texture(img);
     noStroke();
-    // plane(width);
 
-    if (peakDetect.isDetected) {
-      isPeaking = true;
-
-      setTimeout(function() {
-        isPeaking = false;
-      }, 300);
-    } else {
-      //else
-    }
     amplitudeShader = 1;
     frequencyShader = fft.getEnergy("bass") / 50;
     setShader(1);
-
     drawText(font);
 
-    // frequencyShader = fft.getEnergy("treble") > 100 ? 100 : 0;
-    // console.log(fft.getEnergy("treble"));
-    // amplitudeShader = 0.01;
-    // setShader(0.4);
-    // frequencyShader = 1;
-    // setShader(0.4);
     texture(img);
     plane(width * 0.4);
-    //drawPeakText();
 
     if (fft.getEnergy("treble") > 110) {
       drawPeakText();
@@ -113,6 +105,7 @@ function drawSong() {
   rotateX(millis() / 2030);
   beginShape();
   vertex(20, 20, 20);
+
   for (var i = 0; i < spectrum.length; i++) {
     var freq = spectrum[i];
     stroke(255);
@@ -126,6 +119,7 @@ function drawSong() {
       random(0, 1000)
     );
   }
+
   vertex(20, 20, 20);
   endShape();
 }
@@ -144,7 +138,6 @@ function draw3d() {
   specularMaterial(255);
   rotate(millis() / 1000);
   rotateZ(millis() / 1000);
-
   cylinder(fft.getEnergy("bass") / 5, 100);
 }
 
