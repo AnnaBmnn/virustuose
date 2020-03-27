@@ -46,6 +46,7 @@ fileInput.addEventListener("change", e => {
 });
 
 function startSong() {
+  song.setVolume(0);
   song.loop();
 
   fft = new p5.FFT();
@@ -87,14 +88,22 @@ function draw() {
     amplitudeShader = 1;
     frequencyShader = fft.getEnergy("bass") / 50;
     setShader(1);
-    drawText(font);
 
-    texture(img);
-    plane(width * 0.4);
+    drawText();
+    noFill();
+    stroke("#EFFF39");
+    arc(-10, -30, width * 1.2, height * 0.4, 0, PI + QUARTER_PI, OPEN, 50);
 
-    if (fft.getEnergy("treble") > 110) {
-      drawPeakText();
-    }
+    // texture(img);
+    // plane(width * 0.4);
+
+    // spectrum = fft.linAverages();
+
+    // drawSong();
+
+    // if (fft.getEnergy("treble") > 110) {
+    //   drawPeakText();
+    // }
   }
 }
 
@@ -144,16 +153,15 @@ function draw3d() {
 // This function is called when the video loads
 function vidLoad() {
   video.pause();
-  //video.loop();
   video.volume(0);
   video.hide();
 }
 
 function drawText() {
-  textAlign(LEFT);
+  textAlign(CENTER);
   fill("#EFFF39");
   textFont(font, 115);
-  text("PASSION", -width * 0.5 + 10, -height * 0.5 + 30, width, height);
+  text("DANSE", -width * 0.5 + 10, -height * 0.5 + 30, width, height);
 }
 
 function drawPeakText() {
@@ -169,8 +177,6 @@ function setShader(size) {
   // send uniform to shader
   shader.setUniform("tex0", img);
   shader.setUniform("time", frameCount * 0.1);
-
-  // get enery depending on time
 
   // send var to shader
   shader.setUniform("frequency", frequencyShader);

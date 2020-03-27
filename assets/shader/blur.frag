@@ -9,35 +9,30 @@ uniform float time;
 uniform float frequency;
 uniform float amplitude;
 
+vec3 colorA = vec3(0.7216, 0.2157, 0.8471);
+vec3 colorB = vec3(1.0, 1.0, 1.0);
+
 void main() {
+vec2 uv = vTexCoord;
 
-  vec2 uv = vTexCoord;
-  // the texture is loaded upside down and backwards by default so lets flip it
-  uv = 1.0 - uv;
+  vec3 color = vec3(0.0);
 
-  // lets create a sine wave to distort our texture coords
-  // we will use the built in sin() function in glsl
-  // sin() returns the sine of an angle in radians
-  // first will multiply our uv * frequency -- frequency will control how many hills and valleys will be in the wave
-  // then we add some time to our sine, this will make it move 
-  // lastly multiply the whole thing by amplitude -- amplitude controls how tall the hills and valleys are, in this case it will be how much to distort the image
-  // *try changing uv.y to uv.x and see what happens
-  float sineWave = -sin(uv.x * frequency + time) * amplitude;
-  float sineWave2 = -sin(uv.x * frequency + (time - 0.1)) * amplitude;
-  // float sineWave3 = -sin(uv.x * frequency + (time + 0.3)) * amplitude;
+  float pct = abs(sin(frequency+ time));
 
-  // create a vec2 with our sine
-  // what happens if you put sineWave in the y slot? in Both slots?
-  vec2 distort = vec2( sineWave, sineWave2);
-  vec2 distort2 = vec2( sineWave2, 0);
-  // vec2 distort3 = vec2( sineWave3, 0);
+  // Mix uses pct (a value from 0-1) to
+  // mix the two colors
+  color = mix(colorA, colorB, pct);
 
-  // add the distortion to our texture coordinates
-  vec4 tex = texture2D(tex0,  uv - distort);
-  vec4 tex2 = texture2D(tex0,  uv );
-  // vec4 tex3 = texture2D(tex0,  uv - distort3);
+  vec4 f_color = vec4(color,1.0);
 
-  // tex.r = tex2.r;
+  f_color.g = uv.x;
+  f_color.r = uv.y;
+  f_color.b = uv.y + uv.x;
 
-  gl_FragColor = tex;
+  //f_color.r = 0.1*(cos(uv.x) + cos(uv.y)* sin(uv.y));
+  f_color.r = cos(time*0.9)*(cos(uv.x)* sin(uv.x* 5.1) + cos(uv.y* frequency *1.1));
+  f_color.b = sin(time*0.3)*( cos(uv.y*0.3)* sin(uv.x*frequency));
+  //f_color.r = frequency*0.01*(cos(uv.x) * sin(uv.y) + cos(uv.y)* sin(uv.x));
+
+  gl_FragColor = f_color;
 }
