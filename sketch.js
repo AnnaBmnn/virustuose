@@ -14,6 +14,7 @@ let spectrum;
 let isPeaking = false;
 let songUpload;
 let videoUpload;
+let noiseScale = 0.7;
 const startButton = document.querySelector(".js-start");
 const fileInput = document.querySelector(".js-file");
 const testDiv = document.querySelector(".test");
@@ -87,22 +88,7 @@ function draw() {
     amplitudeShader = 1;
     frequencyShader = fft.getEnergy("bass") / 50;
     setShader(1);
-
-    drawText();
-    noFill();
-    stroke("#EFFF39");
-    arc(-10, -30, width * 1.2, height * 0.4, 0, PI + QUARTER_PI, OPEN, 50);
-
-    // texture(img);
-    // plane(width * 0.4);
-
-    // spectrum = fft.linAverages();
-
-    // drawSong();
-
-    // if (fft.getEnergy("treble") > 110) {
-    //   drawPeakText();
-    // }
+    plane(width);
   }
 }
 
@@ -183,6 +169,6 @@ function setShader(size) {
 
   shaderGraphic.rect(0, 0, width, height);
   texture(shaderGraphic);
-  plane(width * size);
+
   //torus(height * 0.2, height * 0.1, 24, 16);
 }
