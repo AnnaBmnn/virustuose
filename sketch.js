@@ -46,7 +46,6 @@ fileInput.addEventListener("change", e => {
 });
 
 function startSong() {
-  song.setVolume(0);
   song.loop();
 
   fft = new p5.FFT();
