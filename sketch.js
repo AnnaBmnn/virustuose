@@ -4,6 +4,7 @@ let peakDetect;
 let hand;
 let osc;
 let font;
+let fontItalic;
 let frequencyShader = 10;
 let amplitudeShader = 1;
 let video;
@@ -15,6 +16,9 @@ let isPeaking = false;
 let songUpload;
 let videoUpload;
 let noiseScale = 0.7;
+let ellipses = [];
+let nbrEllipses = 1;
+let peakDetected = false;
 const startButton = document.querySelector(".js-start");
 const fileInput = document.querySelector(".js-file");
 const testDiv = document.querySelector(".test");
@@ -58,7 +62,8 @@ function preload() {
 
   // TODO : input type file in order to add mix directly
   song = loadSound("assets/sound/song_20200323.mp4");
-  font = loadFont("assets/font/Monarch.otf");
+  font = loadFont("assets/font/Okomito-Regular.otf");
+  fontItalic = loadFont("assets/font/Okomito-Italic.otf");
   //hand = loadModel("assets/obj/hand.obj");
 
   // load the shaders, we will use the same vertex shader and frag shaders for both passes
@@ -75,6 +80,7 @@ function setup() {
   graphic = createGraphics(width, height, WEBGL);
   shaderGraphic = createGraphics(width, height, WEBGL);
   cameraZ = height / 2.0 / tan((PI * 30.0) / 180.0);
+  setUpEllipse();
 }
 
 function draw() {
@@ -84,11 +90,41 @@ function draw() {
 
     background(0);
     noStroke();
-
     amplitudeShader = 1;
+
+    // if (peakDetect.isDetected) {
+    //   // ellipseWidth = 50;
+    //   peakDetected = true;
+    //   setTimeout(function() {
+    //     peakDetected = false;
+    //   }, 3000);
+    // } else {
+    //   // ellipseWidth *= 0.95;
+    // }
+
+    // if (!peakDetected) {
+    //   frequencyShader = fft.getEnergy("bass") / 50;
+    //   setShader(1);
+    //   plane(width);
+    // }
+
     frequencyShader = fft.getEnergy("bass") / 50;
     setShader(1);
     plane(width);
+
+    frequencyShader = fft.getEnergy("treble") / 10;
+    setShader(1);
+
+    ellipse(-width * 0.2, -30, 160, 70, 48);
+
+    frequencyShader = fft.getEnergy("mid") / 50;
+    setShader(1);
+    drawEllipses();
+
+    push();
+    fill("#EDFF0C");
+    drawText();
+    pop();
   }
 }
 
@@ -144,9 +180,9 @@ function vidLoad() {
 
 function drawText() {
   textAlign(CENTER);
-  fill("#EFFF39");
-  textFont(font, 115);
-  text("DANSE", -width * 0.5 + 10, -height * 0.5 + 30, width, height);
+  // fill("rgba(0.6667, 0.6667, 0.6667, 0.01)");
+  textFont(fontItalic, 20);
+  text("J'AI JUSTE ENVIE DE DANSER TOUT LE TEMPS", -width * 0.5, 220, width, height);
 }
 
 function drawPeakText() {
@@ -171,4 +207,41 @@ function setShader(size) {
   texture(shaderGraphic);
 
   //torus(height * 0.2, height * 0.1, 24, 16);
+}
+
+function setUpEllipse() {
+  for (i = 0; i < nbrEllipses; i++) {
+    let ellipse = {};
+    ellipse.d = 70;
+    ellipse.d2 = 140;
+    ellipse.x = round(random(-width * 0.5 + 100, width * 0.5 - 100));
+    ellipse.y = round(random(-height * 0.5 + 100, height * 0.5 - 100));
+    console.log(ellipse.x);
+    ellipse.vitesse = round(random(2, 8));
+    ellipse.directionX = round(random(0, 100)) % 2 == 0 ? 1 : -1;
+    ellipse.directionY = round(random(0, 100)) % 2 == 0 ? 1 : -1;
+    ellipses.push(ellipse);
+  }
+  console.log(ellipses);
+}
+
+function drawEllipses() {
+  for (i = 0; i < nbrEllipses; i++) {
+    let _ellipse = ellipses[i];
+    push();
+    _ellipse.x += _ellipse.vitesse * _ellipse.directionX;
+    _ellipse.y += _ellipse.vitesse * _ellipse.directionY;
+    if (_ellipse.x > width * 0.5 - _ellipse.d / 2 || _ellipse.x < -width * 0.5 + _ellipse.d / 2) {
+      _ellipse.directionX = -_ellipse.directionX; // Changer de direction
+    }
+    if (
+      _ellipse.y > height * 0.5 - _ellipse.d2 / 2 ||
+      _ellipse.y < -height * 0.5 + _ellipse.d2 / 2
+    ) {
+      _ellipse.directionY = -_ellipse.directionY; // Changer de direction
+    }
+    rotateZ(HALF_PI);
+    ellipse(_ellipse.x, _ellipse.y, _ellipse.d, _ellipse.d2, 48);
+    pop();
+  }
 }

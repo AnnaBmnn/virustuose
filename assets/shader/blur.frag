@@ -9,9 +9,11 @@ uniform float time;
 uniform float frequency;
 uniform float amplitude;
 
-vec3 colorA = vec3(0.9804, 0.3804, 0.1961);
-//vec3 colorA = vec3(1.0, 0.8157, 0.0);
-vec3 colorB = vec3(0.9882, 0.6471, 0.9725);
+//vec3 colorA = vec3(0.9216, 1.0, 0.4824);
+vec3 colorA = vec3(1.0, 1.0, 1.0);
+// vec3 colorA = vec3(0.9804, 0.3804, 0.1961);
+vec3 colorB = vec3(0.3529, 0.3529, 0.3529);
+// vec3 colorB = vec3(0.9882, 0.6471, 0.9725);
 vec3 colorC = vec3(0.0, 0.302, 0.0902);
 
 void main() {
@@ -20,8 +22,9 @@ void main() {
   vec3 color = vec3(0.0);
   vec3 color2 = vec3(0.0);
 
-  float pct =  cos(uv.x*3.0)*cos(uv.x*3.0)+ cos(uv.y*frequency*3.0)*cos(uv.y*3.0);
-  float pct2 =  uv.x   + uv.y ;
+  // float pct2 =  cos(uv.x*3.0)*cos(uv.x*3.0)+ cos(uv.y*frequency*3.0)*cos(uv.y*3.0);
+  // float pct2 =  sin(uv.x ) *cos(uv.y)  +sin( uv.y) * cos(uv.x) ;
+  float pct2 =  abs(cos(uv.y*frequency+time))  ;
   // float pct = uv.x + cos(frequency)*0.1 + uv.y ;
   //float pct = frequency*0.1*cos(uv.x*frequency);
 
