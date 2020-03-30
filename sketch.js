@@ -111,14 +111,15 @@ function draw() {
     setShader(1);
     plane(width);
 
-    pop();
-    texture(video);
-    // transform
-    // plane(75)
-    ellipse(75, -200, 160, 70, 48);
     push();
+    texture(video);
+    translate(100, 100);
+    rotateZ(-1 * HALF_PI);
 
+    plane(150);
+    // ellipse(75, -200, 160, 70, 48);
     pop();
+
     frequencyShader = fft.getEnergy("treble") / 10;
     setShader(1);
 
@@ -225,8 +226,8 @@ function setShader(size) {
 function setUpEllipse() {
   for (i = 0; i < nbrEllipses; i++) {
     let ellipse = {};
-    ellipse.d = 70;
-    ellipse.d2 = 140;
+    ellipse.d = 50 + i * 20;
+    ellipse.d2 = 140 + i * 10;
     ellipse.x = round(random(-width * 0.5 + 100, width * 0.5 - 100));
     ellipse.y = round(random(-height * 0.5 + 100, height * 0.5 - 100));
     ellipse.vitesse = nbrEllipses - i + 3 * (nbrEllipses - i);
