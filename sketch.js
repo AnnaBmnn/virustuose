@@ -230,7 +230,7 @@ function setUpEllipse() {
     ellipse.d2 = 140 + i * 10;
     ellipse.x = round(random(-width * 0.5 + 100, width * 0.5 - 100));
     ellipse.y = round(random(-height * 0.5 + 100, height * 0.5 - 100));
-    ellipse.vitesse = 12;
+    ellipse.vitesse = i % 2 == 0 ? 12 : 6;
     // ellipse.vitesse = nbrEllipses - i + 3 * (nbrEllipses - i);
     console.log(ellipse.vitesse);
     // ellipse.vitesse = round(random(2, 8));
