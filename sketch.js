@@ -17,7 +17,7 @@ let songUpload;
 let videoUpload;
 let noiseScale = 0.7;
 let ellipses = [];
-let nbrEllipses = 1;
+let nbrEllipses = 2;
 let peakDetected = false;
 const startButton = document.querySelector(".js-start");
 const fileInput = document.querySelector(".js-file");
@@ -38,7 +38,6 @@ startButton.addEventListener("click", function() {
 });
 
 fileInput.addEventListener("change", e => {
-  console.log(e);
   if (e.srcElement.files.length > 0) {
     songUpload = e.srcElement.files[0];
     videoUpload = document.createElement("video");
@@ -112,10 +111,14 @@ function draw() {
     setShader(1);
     plane(width);
 
-    texture(video);
-    ellipse(75, -200, 160, 70, 48);
     pop();
+    texture(video);
+    // transform
+    // plane(75)
+    ellipse(75, -200, 160, 70, 48);
+    push();
 
+    pop();
     frequencyShader = fft.getEnergy("treble") / 10;
     setShader(1);
 
@@ -226,13 +229,13 @@ function setUpEllipse() {
     ellipse.d2 = 140;
     ellipse.x = round(random(-width * 0.5 + 100, width * 0.5 - 100));
     ellipse.y = round(random(-height * 0.5 + 100, height * 0.5 - 100));
-    console.log(ellipse.x);
-    ellipse.vitesse = round(random(2, 8));
+    ellipse.vitesse = nbrEllipses - i + 3 * (nbrEllipses - i);
+    console.log(ellipse.vitesse);
+    // ellipse.vitesse = round(random(2, 8));
     ellipse.directionX = round(random(0, 100)) % 2 == 0 ? 1 : -1;
     ellipse.directionY = round(random(0, 100)) % 2 == 0 ? 1 : -1;
     ellipses.push(ellipse);
   }
-  console.log(ellipses);
 }
 
 function drawEllipses() {
@@ -251,6 +254,9 @@ function drawEllipses() {
       _ellipse.directionY = -_ellipse.directionY; // Changer de direction
     }
     rotateZ(HALF_PI);
+    if (i % 2 == 1) {
+      texture(video);
+    }
     ellipse(_ellipse.x, _ellipse.y, _ellipse.d, _ellipse.d2, 48);
     pop();
   }
