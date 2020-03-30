@@ -60,7 +60,7 @@ function preload() {
   // load song
 
   // TODO : input type file in order to add mix directly
-  song = loadSound("assets/sound/song_20200323.mp4");
+  song = loadSound("assets/sound/song2.mp3");
   font = loadFont("assets/font/Okomito-Regular.otf");
   fontItalic = loadFont("assets/font/Okomito-Italic.otf");
   //hand = loadModel("assets/obj/hand.obj");
@@ -230,7 +230,8 @@ function setUpEllipse() {
     ellipse.d2 = 140 + i * 10;
     ellipse.x = round(random(-width * 0.5 + 100, width * 0.5 - 100));
     ellipse.y = round(random(-height * 0.5 + 100, height * 0.5 - 100));
-    ellipse.vitesse = nbrEllipses - i + 3 * (nbrEllipses - i);
+    ellipse.vitesse = 12;
+    // ellipse.vitesse = nbrEllipses - i + 3 * (nbrEllipses - i);
     console.log(ellipse.vitesse);
     // ellipse.vitesse = round(random(2, 8));
     ellipse.directionX = round(random(0, 100)) % 2 == 0 ? 1 : -1;
