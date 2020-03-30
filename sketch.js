@@ -71,7 +71,7 @@ function preload() {
   img = loadImage("assets/img/texture.png");
   //video = loadVideo("assets/video/video.mov");
 
-  video = createVideo(["assets/video/video.mp4", "assets/video/video.mov"], vidLoad);
+  video = createVideo(["assets/video/ciel.mp4"], vidLoad);
 }
 
 function setup() {
@@ -112,6 +112,10 @@ function draw() {
     setShader(1);
     plane(width);
 
+    texture(video);
+    ellipse(75, -200, 160, 70, 48);
+    pop();
+
     frequencyShader = fft.getEnergy("treble") / 10;
     setShader(1);
 
@@ -125,6 +129,12 @@ function draw() {
     fill("#EDFF0C");
     drawText();
     pop();
+
+    push();
+    // translate(fft.getEnergy("highMid"), 50);
+    // fill("#C0C0C0");
+    // frequencyShader = fft.getEnergy("highMid") / 10;
+    // setShader(1);
   }
 }
 
