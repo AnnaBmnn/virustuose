@@ -24,9 +24,11 @@ void main() {
   // this is essentially the same as saying (blur.r + blur.g + blur.b) / 3.0;
   float avg = dot(blur.rgb, vec3(0.33333));
 
+  vec4 bloom = texture2D(tex0, uv+ avg);
+
   // mix the blur and camera together according to how bright the blurred image is
   // use the mouse to control the bloom
-  vec4 bloom = mix(cam, blur, clamp(avg*(1.0 + mouseX), 0.0, 1.0));
+  // vec4 bloom = mix(cam, blur, clamp(avg*(1.0 + mouseX), 0.0, 1.0));
 
   gl_FragColor = bloom;
 }

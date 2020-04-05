@@ -23,7 +23,7 @@ const startButton = document.querySelector(".js-start");
 const fileInput = document.querySelector(".js-file");
 const testDiv = document.querySelector(".test");
 
-startButton.addEventListener("click", function() {
+startButton.addEventListener("click", function () {
   if (!song.isPlaying()) {
     startSong();
     video.play();
@@ -37,7 +37,7 @@ startButton.addEventListener("click", function() {
   }
 });
 
-fileInput.addEventListener("change", e => {
+fileInput.addEventListener("change", (e) => {
   if (e.srcElement.files.length > 0) {
     songUpload = e.srcElement.files[0];
     videoUpload = document.createElement("video");
@@ -66,7 +66,7 @@ function preload() {
   //hand = loadModel("assets/obj/hand.obj");
 
   // load the shaders, we will use the same vertex shader and frag shaders for both passes
-  shader = loadShader("assets/shader/vertex.vert", "assets/shader/blur.frag");
+  shader = loadShader("assets/shader/vertex.vert", "assets/shader/bloom.frag");
   img = loadImage("assets/img/texture.png");
   //video = loadVideo("assets/video/video.mov");
 
@@ -89,56 +89,11 @@ function draw() {
 
     background(0);
     noStroke();
-    amplitudeShader = 1;
-
-    // if (peakDetect.isDetected) {
-    //   // ellipseWidth = 50;
-    //   peakDetected = true;
-    //   setTimeout(function() {
-    //     peakDetected = false;
-    //   }, 3000);
-    // } else {
-    //   // ellipseWidth *= 0.95;
-    // }
-
-    // if (!peakDetected) {
-    //   frequencyShader = fft.getEnergy("bass") / 50;
-    //   setShader(1);
-    //   plane(width);
-    // }
+    amplitudeShader = 1.0;
 
     frequencyShader = fft.getEnergy("bass") / 50;
     setShader(1);
     plane(width);
-
-    push();
-    texture(video);
-    translate(100, 100);
-    rotateZ(-1 * HALF_PI);
-
-    plane(150);
-    // ellipse(75, -200, 160, 70, 48);
-    pop();
-
-    frequencyShader = fft.getEnergy("treble") / 10;
-    setShader(1);
-
-    ellipse(-width * 0.2, -30, 160, 70, 48);
-
-    frequencyShader = fft.getEnergy("mid") / 50;
-    setShader(1);
-    drawEllipses();
-
-    push();
-    fill("#EDFF0C");
-    drawText();
-    pop();
-
-    push();
-    // translate(fft.getEnergy("highMid"), 50);
-    // fill("#C0C0C0");
-    // frequencyShader = fft.getEnergy("highMid") / 10;
-    // setShader(1);
   }
 }
 
@@ -199,23 +154,18 @@ function drawText() {
   text("J'AI JUSTE ENVIE DE DANSER TOUT LE TEMPS", -width * 0.5, 220, width, height);
 }
 
-function drawPeakText() {
-  fill("#EFFF39");
-  textFont(font, 143);
-  text("DANSE", -width * 0.5 + 10, 170, width, height);
-}
-
 function setShader(size) {
   // set shader to bgGraphic
   shaderGraphic.shader(shader);
 
   // send uniform to shader
-  shader.setUniform("tex0", img);
-  shader.setUniform("time", frameCount * 0.1);
+  shader.setUniform("tex1", img);
+  shader.setUniform("tex0", video);
+  // shader.setUniform("time", frameCount * 0.1);
 
   // send var to shader
-  shader.setUniform("frequency", frequencyShader);
-  shader.setUniform("amplitude", amplitudeShader);
+  // shader.setUniform("frequency", frequencyShader);
+  // shader.setUniform("amplitude", amplitudeShader);
 
   shaderGraphic.rect(0, 0, width, height);
   texture(shaderGraphic);
