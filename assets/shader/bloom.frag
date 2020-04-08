@@ -17,14 +17,16 @@ void main() {
   uv = 1.0 - uv;
 
   // get the camera and the blurred image as textures
-  vec4 cam = texture2D(tex0, uv);
-  vec4 blur = texture2D(tex1, uv);
+  vec4 cam = texture2D(tex1, uv);
+  vec4 blur = texture2D(tex0, uv);
 
   // calculate an average color for the blurred image
   // this is essentially the same as saying (blur.r + blur.g + blur.b) / 3.0;
   float avg = dot(blur.rgb, vec3(0.33333));
 
-  vec4 bloom = texture2D(tex0, uv+ avg);
+  vec4 bloom = texture2D(tex1, uv+ avg);
+
+  bloom.g = bloom.r;
 
   // mix the blur and camera together according to how bright the blurred image is
   // use the mouse to control the bloom

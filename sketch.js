@@ -28,11 +28,14 @@ startButton.addEventListener("click", function () {
     startSong();
     video.play();
     video.loop();
+    videoW.play();
+    videoW.loop();
 
     this.innerHTML = "pause";
   } else {
     song.pause();
     video.pause();
+    videoW.pause();
     this.innerHTML = "play";
   }
 });
@@ -51,6 +54,7 @@ fileInput.addEventListener("change", (e) => {
 
 function startSong() {
   song.loop();
+  song.setVolume(0);
 
   fft = new p5.FFT();
   peakDetect = new p5.PeakDetect();
@@ -70,7 +74,8 @@ function preload() {
   img = loadImage("assets/img/texture.png");
   //video = loadVideo("assets/video/video.mov");
 
-  video = createVideo(["assets/video/ciel.mp4"], vidLoad);
+  video = createVideo(["assets/video/video.mp4"], vidLoad);
+  videoW = createVideo(["assets/video/water.mp4"], vidLoad);
 }
 
 function setup() {
@@ -94,6 +99,8 @@ function draw() {
     frequencyShader = fft.getEnergy("bass") / 50;
     setShader(1);
     plane(width);
+
+    // drawText();
   }
 }
 
@@ -145,13 +152,17 @@ function vidLoad() {
   video.pause();
   video.volume(0);
   video.hide();
+
+  videoW.pause();
+  videoW.volume(0);
+  videoW.hide();
 }
 
 function drawText() {
-  textAlign(CENTER);
-  // fill("rgba(0.6667, 0.6667, 0.6667, 0.01)");
-  textFont(fontItalic, 20);
-  text("J'AI JUSTE ENVIE DE DANSER TOUT LE TEMPS", -width * 0.5, 220, width, height);
+  textAlign(LEFT);
+  fill("rgba(0.6667, 0.6667, 0.6667, 0.01)");
+  textFont(fontItalic, 88);
+  text("J'AI JUSTE ENVIE DE DANSER TOUT LE TEMPS", -width * 0.4, -height * 0.5, width, height);
 }
 
 function setShader(size) {
@@ -159,7 +170,7 @@ function setShader(size) {
   shaderGraphic.shader(shader);
 
   // send uniform to shader
-  shader.setUniform("tex1", img);
+  shader.setUniform("tex1", videoW);
   shader.setUniform("tex0", video);
   // shader.setUniform("time", frameCount * 0.1);
 
