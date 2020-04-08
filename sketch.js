@@ -99,7 +99,6 @@ function draw() {
     frequencyShader = fft.getEnergy("bass") / 50;
     setShader(1);
     plane(width);
-
     // drawText();
   }
 }
