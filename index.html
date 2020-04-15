@@ -12,10 +12,13 @@
         height: 100vh;
       }
       #defaultCanvas0 {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         margin: 0 auto;
-        position: relative;
-        top: 50px;
         display: block !important;
+        filter: blur(16px);
       }
       .button {
         position: absolute;
@@ -30,12 +33,25 @@
         left: 20px;
         z-index: 20;
       }
+      .filter {
+        /* width: 550px;
+        height: 350px;
+        position: absolute;
+        left: 50%;
+        top: 50px;
+        z-index: 1000;
+        transform: translateX(-50%);
+        filter: blur(4px);
+        background-color: #c1c1c1;
+        border: 3px solid yellow; */
+      }
     </style>
   </head>
   <body>
     <button class="js-start button">start</button>
     <input type="file" id="music" name="music" accept=".mp4, .mov, .mp3" class="file js-file" />
     <div class="test"></div>
+    <!-- <div class="filter"></div> -->
     <script src="assets/js/p5.min.js"></script>
     <script src="assets/js/p5.dom.js"></script>
     <script src="assets/js/p5.sound.js"></script>

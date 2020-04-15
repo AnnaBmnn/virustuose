@@ -17,8 +17,10 @@ let songUpload;
 let videoUpload;
 let noiseScale = 0.7;
 let ellipses = [];
-let nbrEllipses = 2;
+let nbrEllipses = 40;
 let peakDetected = false;
+let pg;
+let colors;
 const startButton = document.querySelector(".js-start");
 const fileInput = document.querySelector(".js-file");
 const testDiv = document.querySelector(".test");
@@ -69,21 +71,27 @@ function preload() {
   fontItalic = loadFont("assets/font/Okomito-Italic.otf");
   //hand = loadModel("assets/obj/hand.obj");
 
-  // load the shaders, we will use the same vertex shader and frag shaders for both passes
-  shader = loadShader("assets/shader/vertex.vert", "assets/shader/bloom.frag");
-  img = loadImage("assets/img/texture.png");
-  //video = loadVideo("assets/video/video.mov");
-
   video = createVideo(["assets/video/video.mp4"], vidLoad);
   videoW = createVideo(["assets/video/water.mp4"], vidLoad);
 }
 
 function setup() {
+  let sapin = color("#015230");
+  let peach = color("#FFAF8D");
+  let lavender = color("#CDCCFF");
+  // let purple = color("#7000FF");
+  // let darkBlue = color("#03008B");
+  let yellow = color("#F2FF5B");
+  let grey = color("#C1C1C1");
+  // colors = [color("#FF0000"), color("#FF6B18"), color("#A7FF18"), color("#F2FF5B")];
+  colors = [lavender, peach, yellow, grey];
+
   // shaders require WEBGL mode to work
-  createCanvas(550, 550, WEBGL);
-  graphic = createGraphics(width, height, WEBGL);
-  shaderGraphic = createGraphics(width, height, WEBGL);
-  cameraZ = height / 2.0 / tan((PI * 30.0) / 180.0);
+  createCanvas(windowWidth, windowHeight);
+  pg = createGraphics(windowWidth, windowHeight);
+
+  pg.background(grey);
+
   setUpEllipse();
 }
 
@@ -92,14 +100,14 @@ function draw() {
     fft.analyze();
     peakDetect.update(fft);
 
-    background(0);
-    noStroke();
-    amplitudeShader = 1.0;
+    background(200, 200, 200);
 
-    frequencyShader = fft.getEnergy("bass") / 50;
-    setShader(1);
-    plane(width);
-    // drawText();
+    fill(255, 204, 0);
+    pg.fill(255, 204, 0);
+    pg.noStroke();
+    drawFormsGraphics();
+    image(pg, 0, 0);
+    // filter(BLUR, 10);
   }
 }
 
@@ -133,19 +141,6 @@ function windowResized() {
   //resizeCanvas(windowWidth, windowHeight);
 }
 
-function draw3d() {
-  ambientLight(50);
-  specularColor(255, 255, 0);
-  pointLight(255, 255, 255, 0, -50, 50);
-  specularColor(0, 255, 255);
-  pointLight(255, 255, 0, 0, 50, 50);
-  shininess(20);
-  specularMaterial(255);
-  rotate(millis() / 1000);
-  rotateZ(millis() / 1000);
-  cylinder(fft.getEnergy("bass") / 5, 100);
-}
-
 // This function is called when the video loads
 function vidLoad() {
   video.pause();
@@ -164,38 +159,22 @@ function drawText() {
   text("J'AI JUSTE ENVIE DE DANSER TOUT LE TEMPS", -width * 0.4, -height * 0.5, width, height);
 }
 
-function setShader(size) {
-  // set shader to bgGraphic
-  shaderGraphic.shader(shader);
-
-  // send uniform to shader
-  shader.setUniform("tex1", videoW);
-  shader.setUniform("tex0", video);
-  // shader.setUniform("time", frameCount * 0.1);
-
-  // send var to shader
-  // shader.setUniform("frequency", frequencyShader);
-  // shader.setUniform("amplitude", amplitudeShader);
-
-  shaderGraphic.rect(0, 0, width, height);
-  texture(shaderGraphic);
-
-  //torus(height * 0.2, height * 0.1, 24, 16);
-}
-
 function setUpEllipse() {
   for (i = 0; i < nbrEllipses; i++) {
     let ellipse = {};
-    ellipse.d = 50 + i * 20;
-    ellipse.d2 = 140 + i * 10;
-    ellipse.x = round(random(-width * 0.5 + 100, width * 0.5 - 100));
-    ellipse.y = round(random(-height * 0.5 + 100, height * 0.5 - 100));
-    ellipse.vitesse = i % 2 == 0 ? 12 : 6;
-    // ellipse.vitesse = nbrEllipses - i + 3 * (nbrEllipses - i);
-    console.log(ellipse.vitesse);
-    // ellipse.vitesse = round(random(2, 8));
+    let _size = round(random(40, 100 - i * 10 + 405));
+    ellipse.d = _size;
+    ellipse.d2 = _size;
+    ellipse.x = round(random(0, width));
+    ellipse.y = round(random(0, height));
+    ellipse.vitesse = random(0.1, 0.4);
+
     ellipse.directionX = round(random(0, 100)) % 2 == 0 ? 1 : -1;
     ellipse.directionY = round(random(0, 100)) % 2 == 0 ? 1 : -1;
+
+    ellipse.color = colors[round(random(0, colors.length - 1))];
+    console.log(ellipse.color);
+    // console.log(round(random(0, colors.length)));
     ellipses.push(ellipse);
   }
 }
@@ -206,20 +185,32 @@ function drawEllipses() {
     push();
     _ellipse.x += _ellipse.vitesse * _ellipse.directionX;
     _ellipse.y += _ellipse.vitesse * _ellipse.directionY;
-    if (_ellipse.x > width * 0.5 - _ellipse.d / 2 || _ellipse.x < -width * 0.5 + _ellipse.d / 2) {
+    if (_ellipse.x > width - _ellipse.d / 2 || _ellipse.x < _ellipse.d / 2) {
       _ellipse.directionX = -_ellipse.directionX; // Changer de direction
     }
-    if (
-      _ellipse.y > height * 0.5 - _ellipse.d2 / 2 ||
-      _ellipse.y < -height * 0.5 + _ellipse.d2 / 2
-    ) {
+    if (_ellipse.y > height - _ellipse.d2 / 2 || _ellipse.y < -height * 0.5 + _ellipse.d2 / 2) {
       _ellipse.directionY = -_ellipse.directionY; // Changer de direction
     }
-    rotateZ(HALF_PI);
-    if (i % 2 == 1) {
-      texture(video);
-    }
     ellipse(_ellipse.x, _ellipse.y, _ellipse.d, _ellipse.d2, 48);
+    pop();
+  }
+}
+
+function drawFormsGraphics() {
+  for (i = 0; i < nbrEllipses; i++) {
+    let _ellipse = ellipses[i];
+    push();
+    _ellipse.x += _ellipse.vitesse * _ellipse.directionX;
+    _ellipse.y += _ellipse.vitesse * _ellipse.directionY;
+    if (_ellipse.x > width - _ellipse.d / 2 || _ellipse.x < _ellipse.d / 2) {
+      _ellipse.directionX = -_ellipse.directionX; // Changer de direction
+    }
+    if (_ellipse.y > height - _ellipse.d2 / 2 || _ellipse.y < _ellipse.d2 / 2) {
+      _ellipse.directionY = -_ellipse.directionY; // Changer de direction
+    }
+    // rotateZ(HALF_PI);
+    pg.fill(_ellipse.color);
+    pg.ellipse(_ellipse.x, _ellipse.y, _ellipse.d, _ellipse.d2, 48);
     pop();
   }
 }
